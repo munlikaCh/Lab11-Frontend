@@ -21,7 +21,7 @@
         label="Select an Organizer"
       />
       <h3>The image of the Event</h3>
-      <UploadImages  @changed="handleImages" />
+      <UploadImages @changed="handleImages" />
       <button type="submit">Submit</button>
     </form>
 
@@ -52,35 +52,41 @@ export default {
   },
   methods: {
     saveEvent() {
-       Promise.all(       
-          this.files.map((file) => {
-            return EventService.uploadFile(file)
-          })       
+      console.log(this.files)
+      Promise.all(
+        this.files.map((file) => {
+          return EventService.uploadFile(file)
+        })
       ).then((response) => {
-          console.log(response.map((r) => r.data))
-          console.log('finish upload file')
-      })
-      EventService.saveEvent(this.event)
-        .then((response) => {
-          console.log(response)
-          this.$router.push({
-            name: 'EventLayout',
-            params: { id: response.data.id }
+        this.event.imageUrls = response.map((r) => r.data)
+        EventService.saveEvent(this.event)
+          .then((response) => {
+            console.log(response)
+            this.$router.push({
+              name: 'EventLayout',
+              params: { id: response.data.id }
+            })
+            this.GStore.flashMessage =
+              'You are successfully add a new event for ' + response.data.title
+            setTimeout(() => {
+              this.GStore.flashMessage = ''
+            }, 3000)
           })
-          this.GStore.flashMessage =
-            'You are successfully add a new event for ' + response.data.title
-          setTimeout(() => {
-            this.GStore.flashMessage = ''
-          }, 3000)
-        })
-        .catch(() => {
-          this.$router.push('NetworkError')
-        })
-      },
-      handleImages(files) {
-        // console.log(files)
-        this.files = files
-     }
+          //   this.GStore.flashMessage =
+          //     'You are successfully add a new event for ' + response.data.title
+          //   setTimeout(() => {
+          //     this.GStore.flashMessage = ''
+          //   }, 3000)
+          // })
+          .catch(() => {
+            this.$router.push('NetworkError')
+          })
+      })
+    },
+    handleImages(files) {
+      // console.log(files)
+      this.files = files
+    }
   }
 }
 </script>
