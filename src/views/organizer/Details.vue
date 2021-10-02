@@ -1,13 +1,14 @@
 <template>
-  <p>{{ event.time }} on {{ event.date }} @ {{ event.location }}</p>
-  <p>{{ event.description }}</p>
+  <p>{{ organizer.name }}</p>
+  <img v-for="url in organizer.imageUrls" :key="url" :src="url" />
 </template>
 
 <script>
 export default {
-  props: ['event']
+  props: ['organizer']
 }
 </script>
+
 <style scoped>
 img {
   border: 1px solid #ddd; /* Gray border */
